@@ -63,7 +63,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Code\Controller\ArmyUnitScript.cs" />
     <Compile Include="Assets\Code\Controller\BattleDeltaTimeScript.cs" />
+    <Compile Include="Assets\Code\Controller\BattleStateMachineScript.cs" />
     <Compile Include="Assets\Code\Controller\RealBattleInfoScript.cs" />
     <Compile Include="Assets\Code\Controller\RealBattleScript.cs" />
     <Compile Include="Assets\Code\View\BattleGUIScript.cs" />
