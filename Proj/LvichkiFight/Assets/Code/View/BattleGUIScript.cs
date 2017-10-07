@@ -3,13 +3,8 @@ using System.Collections;
 
 public class BattleGUIScript : MonoBehaviour
 {
-    private GameObject EngineObj;
-    public EngineScript Engine;
-
-    private GameObject GUIGUIObj;
-    public GUIGUIScript GUIGUI;
-
-    private RealBattleScript Battle = null;
+    private BattleStateMachineScript state;
+    private RealBattleScript battle;
 
     #region STYLES
 
@@ -38,266 +33,79 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
-        EngineObj = GameObject.Find("Engine");
-        Engine = (EngineScript)EngineObj.GetComponent("EngineScript");
-
-        GUIGUIObj = GameObject.Find("GUIGUI");
-        GUIGUI = (GUIGUIScript)GUIGUIObj.GetComponent("GUIGUIScript");
-
-        initStyles();
+        state = new BattleStateMachineScript();
     }
-
-    #region INIT_STYLES
-    void initStyles()
-    {
-        #region CHOICE
-
-        #region BATTLE
-        Choice_Battle_Style.fontSize = 32;
-        Choice_Battle_Style.alignment = TextAnchor.MiddleCenter;
-        Choice_Battle_Style.contentOffset = new Vector2(-1.0f, -0.0f);
-        #endregion
-
-        #region BUT
-        Choice_But_Style.fontSize = 32;
-        Choice_But_Style.alignment = TextAnchor.MiddleCenter;
-        #endregion
-
-        #endregion
-    }
-    #endregion
 
     void Update()
     {
-        if (GUIGUI.GameScreenState == GameScreenEnum.Game &&
-            GUIGUI.StateM.State == GameState.Battle &&
-            GUIGUI.StateM.Battle_State == BattleState.Fight)
+        if (state.Battle_State == BattleState.Fight)
         {
             BattleDeltaTimeScript.Update();
             if (BattleDeltaTimeScript.IsNextFrame())
             {
-                Battle.Update(BattleDeltaTimeScript.SpeedTime);
+                battle.Update(BattleDeltaTimeScript.SpeedTime);
             }
         }
-    }
 
-    void OnGUI()
-    {
-        GUI.depth = GUIDepthScript.Battle;
-        if (GUIGUI.GameScreenState == GameScreenEnum.Game &&
-            GUIGUI.StateM.State == GameState.Battle)
+        switch (state.Battle_State)
         {
-            switch (GUIGUI.StateM.Battle_State)
-            {
-                case BattleState.Choice:
-                    drawChoice();
-                    break;
-                case BattleState.Pre:
-                    drawFight();
-                    drawPre();
-                    break;
-                case BattleState.Fight:
-                    drawFight();
-                    break;
-                case BattleState.Post:
-                    drawFight();
-                    drawPost();
-                    break;
-                default:
-                    Debug.Log("error in OnGUI in BattleGUIScript");
-                    break;
-            }
+            case BattleState.Choice:
+                drawChoice();
+                break;
+            case BattleState.Pre:
+                drawFight();
+                drawPre();
+                break;
+            case BattleState.Fight:
+                drawFight();
+                break;
+            case BattleState.Post:
+                drawFight();
+                drawPost();
+                break;
+            default:
+                Debug.Log("error in OnGUI in BattleGUIScript");
+                break;
         }
     }
 
     #region CHOICE
     void drawChoice()
     {
-        ArmyUnitScript oneArmy = GUIGUI.StateM.OneArmy;
-        ArmyUnitScript twoArmy = GUIGUI.StateM.TwoArmy;
+        ArmyUnitScript oneArmy = state.OneArmy;
+        ArmyUnitScript twoArmy = state.TwoArmy;
         int oneID = oneArmy.GetCountryID();
         int twoID = twoArmy.GetCountryID();
 
-        #region BACKGROUND
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_Background, Choice_Background_Style);
-        #endregion
-
-        #region BATTLE
-        string battleText = Text.GetBattle(TextBattle.Battle);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_Victory_V, battleText, Choice_Battle_Style);
-        #endregion
-
-        #region FLAGS
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_Flag_Left, GUIGUI.Icons_Flags_Styles[oneID]);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_Flag_Right, GUIGUI.Icons_Flags_Styles[twoID]);
-        #endregion
-
-        #region COUNTRY_NAMES
-        string oneCountryName = Text.GetCountryName((TextCountriesNames)oneID);
-        string twoCountryName = Text.GetCountryName((TextCountriesNames)twoID);
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_CountryName_Left, oneCountryName, Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_CountryName_Right, twoCountryName, Text_Style);
-        #endregion
-
-        #region AREA_NAME
-        string areaNameText = Text.GetPopup(TextPopup.Area) + oneArmy.GetCurrAreaID().ToString();
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_AreaName, areaNameText, Text_Style);
-        #endregion
-
-        #region INFO
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Label_All, GUIGUI.Icons_AllTroops_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Label_Inf, GUIGUI.Icons_Infantry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Label_Cav, GUIGUI.Icons_Cavalry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Label_Art, GUIGUI.Icons_Artillery_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Label_Morale, GUIGUI.Icons_Morale_Style);
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Label_All, GUIGUI.Icons_AllTroops_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Label_Inf, GUIGUI.Icons_Infantry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Label_Cav, GUIGUI.Icons_Cavalry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Label_Art, GUIGUI.Icons_Artillery_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Label_Morale, GUIGUI.Icons_Morale_Style);
-
-        int oneInf = (int)oneArmy.GetInfantry();
-        int oneCav = (int)oneArmy.GetCavalry();
-        int oneArt = (int)oneArmy.GetArtillery();
-        int oneAll = oneInf + oneCav + oneArt;
-        int oneMorale = (int)oneArmy.GetMorale();
-
-        int twoInf = (int)twoArmy.GetInfantry();
-        int twoCav = (int)twoArmy.GetCavalry();
-        int twoArt = (int)twoArmy.GetArtillery();
-        int twoAll = twoInf + twoCav + twoArt;
-        int twoMorale = (int)twoArmy.GetMorale();
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Text_All, oneAll.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Text_Inf, oneInf.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Text_Cav, oneCav.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Text_Art, oneArt.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Left_Text_Morale, oneMorale.ToString(), Text_Style);
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Text_All, twoAll.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Text_Inf, twoInf.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Text_Cav, twoCav.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Text_Art, twoArt.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Popup_Msg_BattleInfo_PreInfo_Right_Text_Morale, twoMorale.ToString(), Text_Style);
-        #endregion
-
-        #region BUTTONS
-        if (GUIGUI.CreateButton(GUIGUI.GUIel.SplitArmy_But_Cancel, Text.GetBattle(TextBattle.QuickBattle), Choice_But_Style))
-        {
-            ArmyStateClass preOne, preTwo, postOne, postTwo;
-            bool isOneWin = Engine.autoBattle_in_chechAndDoBattlesInArea(oneArmy, twoArmy, out preOne, out preTwo, out postOne, out postTwo);
-            int exAreaID = oneArmy.GetCurrAreaID();
-            Engine.warStatesAndPopup_in_chechAndDoBattlesInArea(isOneWin, oneID, twoID, exAreaID,
-                preOne, preTwo, postOne, postTwo, false);
-
-            Engine.checkAndDeleteArmy_in_chechAndDoBattlesInArea(oneID);
-            Engine.checkAndDeleteArmy_in_chechAndDoBattlesInArea(twoID);
-
-            GUIGUI.StateM.ClickQuickBattle();
-        }
-        if (GUIGUI.CreateButton(GUIGUI.GUIel.SplitArmy_But_OK, Text.GetBattle(TextBattle.Simulation), Choice_But_Style))
-        {
-            Battle = new RealBattleScript(oneArmy, twoArmy);
-            GUIGUI.StateM.ClickPreRealBattle();
-        }
-        #endregion
+        battle = new RealBattleScript(oneArmy, twoArmy);
+        state.ClickPreRealBattle();
     }
     #endregion
 
     #region FIGHT
     void drawPre()
     {
-        #region START_BATTLE
-        if (GUIGUI.CreateButton(GUIGUI.GUIel.Battle_Pre_StartBattle, Text.GetBattle(TextBattle.StartBattle), Choice_But_Style))
-        {
-            GUIGUI.StateM.ClickFightRealBattle();
-        }
-        #endregion
+        state.ClickFightRealBattle();
     }
     void drawFight()
     {
-        int oneID = GUIGUI.StateM.OneArmy.GetCountryID();
-        int twoID = GUIGUI.StateM.TwoArmy.GetCountryID();
-
-        #region BACKGORUND
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Background, Fight_Back_Style);
-        #endregion
-
-        #region FLAGS
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Flag, GUIGUI.Icons_Flags_Styles[oneID]);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Flag, GUIGUI.Icons_Flags_Styles[twoID]);
-        #endregion
-
-        #region COUNTRY_NAMES
-        string oneCountryName = Text.GetCountryName((TextCountriesNames)oneID);
-        string twoCountryName = Text.GetCountryName((TextCountriesNames)twoID);
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_CountryName, oneCountryName, Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_CountryName, twoCountryName, Text_Style);
-        #endregion
-
-        #region INFO
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Label_All, GUIGUI.Icons_AllTroops_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Label_Inf, GUIGUI.Icons_Infantry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Label_Cav, GUIGUI.Icons_Cavalry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Label_Art, GUIGUI.Icons_Artillery_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Label_Morale, GUIGUI.Icons_Morale_Style);
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Label_All, GUIGUI.Icons_AllTroops_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Label_Inf, GUIGUI.Icons_Infantry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Label_Cav, GUIGUI.Icons_Cavalry_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Label_Art, GUIGUI.Icons_Artillery_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Label_Morale, GUIGUI.Icons_Morale_Style);
-
-        int oneInf = (int)Battle.InfOne.GetCountReal();
-        int oneCav = (int)(Battle.CavLeftOne.GetCountReal() + Battle.CavRightOne.GetCountReal());
-        int oneArt = (int)Battle.ArtOne.GetCountReal();
-        int oneAll = oneInf + oneCav + oneArt;
-        int oneMorale = (int)Battle.GetMoraleOne();
-
-        int twoInf = (int)Battle.InfTwo.GetCountReal();
-        int twoCav = (int)(Battle.CavLeftTwo.GetCountReal() + Battle.CavRightTwo.GetCountReal());
-        int twoArt = (int)Battle.ArtTwo.GetCountReal();
-        int twoAll = twoInf + twoCav + twoArt;
-        int twoMorale = 0;
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Text_All, oneAll.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Text_Inf, oneInf.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Text_Cav, oneCav.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Text_Art, oneArt.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_One_Text_Morale, oneMorale.ToString(), Text_Style);
-
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Text_All, twoAll.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Text_Inf, twoInf.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Text_Cav, twoCav.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Text_Art, twoArt.ToString(), Text_Style);
-        GUIGUI.CreateBox(GUIGUI.GUIel.Battle_Fight_Two_Text_Morale, twoMorale.ToString(), Text_Style);
-        #endregion
-
-        #region VICTORY
-        if (GUIGUI.StateM.Battle_State == BattleState.Fight)
-        {
-            if (oneAll == 0)
-            {
-                GUIGUI.StateM.ClickPostRealBattle(false);
-            }
-            if (twoAll == 0)
-            {
-                GUIGUI.StateM.ClickPostRealBattle(true);
-            }
-        }
-        #endregion
+        //if (oneAll == 0)
+        //{
+        //    GUIGUI.StateM.ClickPostRealBattle(false);
+        //}
+        //if (twoAll == 0)
+        //{
+        //    GUIGUI.StateM.ClickPostRealBattle(true);
+        //}
 
         #region FIELD
         GUIBox unitBox = new GUIBox(0, 0, 0, 0, "");
 
         #region INF
-        for (int i = 0; i < Battle.InfOne.GetUnitsCount(); i++)
+        for (int i = 0; i < battle.InfOne.GetUnitsCount(); i++)
         {
-            unitBox.Left = Battle.InfOne.GetUnit(i).X - RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf) / 2.0f;
-            unitBox.Top = Battle.InfOne.GetUnit(i).Y - RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf) / 2.0f;
+            unitBox.Left = battle.InfOne.GetUnit(i).X - RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf) / 2.0f;
+            unitBox.Top = battle.InfOne.GetUnit(i).Y - RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf) / 2.0f;
             unitBox.Width = unitBox.Height = RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf);
             GUIGUI.CreateBox(unitBox, Unit_Inf_One_Style);
         }
@@ -388,12 +196,12 @@ public class BattleGUIScript : MonoBehaviour
     void drawPost()
     {
         #region VICTORY
-        ArmyUnitScript oneArmy = GUIGUI.StateM.OneArmy;
-        ArmyUnitScript twoArmy = GUIGUI.StateM.TwoArmy;
+        ArmyUnitScript oneArmy = state.OneArmy;
+        ArmyUnitScript twoArmy = state.TwoArmy;
         int myID = Engine.World.GetMyCountryID();
         int oneID = oneArmy.GetCountryID();
         int twoID = twoArmy.GetCountryID();
-        bool isOneWin = GUIGUI.StateM.GetIsOneWin();
+        bool isOneWin = state.GetIsOneWin();
         bool isMyOne = myID == oneID;
 
         string text = isMyOne == isOneWin ? Text.GetPopup(TextPopup.BattleInfo_Victory) : Text.GetPopup(TextPopup.BattleInfo_Defeat);
