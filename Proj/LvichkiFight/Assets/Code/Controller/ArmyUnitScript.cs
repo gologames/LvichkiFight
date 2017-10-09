@@ -3,7 +3,11 @@ using System.Collections;
 
 public class ArmyUnitScript
 {
-    private int unic_id;
+    public const float Morale_Max = 100.0f;
+    public const float Morale_Min = 0.0f;
+
+    public const int Morale_Default = 50;
+    public const float Morale_Gain = 1.0f;
 
 	private float morale;
 
@@ -24,8 +28,7 @@ public class ArmyUnitScript
     #region CTOR
     public ArmyUnitScript(float infantry, float cavalry, float artillery, int countryID, int currAreaID)
 	{
-        this.unic_id = ArmyInfoScript.GetUnicID();
-		this.morale = ArmyInfoScript.Morale_Default;
+        this.morale = Morale_Default;
 		this.infantry = infantry;
 		this.cavalry = cavalry;
 		this.artillery = artillery;
@@ -41,7 +44,6 @@ public class ArmyUnitScript
 
     public ArmyUnitScript(float morale, float infantry, float cavalry, float artillery, int countryID, int currAreaID, bool isMoving, int destAreaID)
     {
-        this.unic_id = ArmyInfoScript.GetUnicID();
         this.morale = morale;
         this.infantry = infantry;
         this.cavalry = cavalry;
@@ -54,13 +56,6 @@ public class ArmyUnitScript
         this.isDeath = false;
         this.isMoraleChange = false;
         this.isMoraleUp = false;
-    }
-    #endregion
-
-    #region UNIC_ID
-    public int GetUnicID()
-    {
-        return unic_id;
     }
     #endregion
 
@@ -134,7 +129,7 @@ public class ArmyUnitScript
 	}
 	public void AddMorale(float gain)
 	{
-		if (gain >= 0 && this.morale + gain <= ArmyInfoScript.Morale_Max)
+		if (gain >= 0 && this.morale + gain <= Morale_Max)
 		{
 			this.morale += gain;
 		}
@@ -145,7 +140,7 @@ public class ArmyUnitScript
 	}
     public void SubMorale(float loss)
 	{
-		if (loss >= 0 && this.morale - loss >= ArmyInfoScript.Morale_Min)
+		if (loss >= 0 && this.morale - loss >= Morale_Min)
 		{
 			this.morale -= loss;
 		}
