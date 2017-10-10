@@ -1,92 +1,57 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class battleGUIScript : MonoBehaviour
+public class BattleGUIScript : MonoBehaviour
 {
-    private BattleStateMachineScript state;
+    [SerializeField]
+    private GameObject infPrefab;
+    [SerializeField]
+    private GameObject cavPrefab;
+    [SerializeField]
+    private GameObject artPrefab;
     private RealBattleScript battle;
+    private GameObject[] linf;
+    private GameObject[] lcav;
+    private GameObject[] lart;
+    private GameObject[] rinf;
+    private GameObject[] rcav;
+    private GameObject[] rart;
 
-    #region STYLES
-
-    #region CHOICE
-    public GUIStyle Choice_Battle_Style;
-    public GUIStyle Choice_Background_Style;
-    public GUIStyle Choice_But_Style;
-    #endregion
-
-    #region FIGHT
-    public GUIStyle Fight_Back_Style;
-
-    #region UNITS
-    public GUIStyle Unit_Inf_One_Style;
-    public GUIStyle Unit_Inf_Two_Style;
-    public GUIStyle Unit_Cav_One_Style;
-    public GUIStyle Unit_Cav_Two_Style;
-    public GUIStyle Unit_Art_One_Style;
-    public GUIStyle Unit_Art_Two_Style;
-    #endregion
-
-    #endregion
-
-    public GUIStyle Text_Style;
-    #endregion
+    void InitPrefabs(GameObject[] arr, GameObject prefab, int count)
+    {
+        arr = new GameObject[count];
+        for (int i = 0; i < count; i++)
+        { arr[i] = Instantiate<GameObject>(prefab); }
+    }
 
     void Start()
     {
-        state = new BattleStateMachineScript();
+        ArmyUnitScript leftArmy = new ArmyUnitScript(1, 0, 0);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(1, 0, 0);
+        battle = new RealBattleScript(leftArmy, rightArmy);
+
+        InitPrefabs(linf, infPrefab, battle.InfOne.GetUnitsCount());
+        InitPrefabs(lcav, cavPrefab, battle.CavLeftOne.GetUnitsCount() +
+            battle.CavRightOne.GetUnitsCount());
+        InitPrefabs(lart, artPrefab, battle.ArtOne.GetUnitsCount());
+        InitPrefabs(rinf, infPrefab, battle.InfTwo.GetUnitsCount());
+        InitPrefabs(rcav, cavPrefab, battle.CavLeftTwo.GetUnitsCount() +
+            battle.CavRightTwo.GetUnitsCount());
+        InitPrefabs(rart, artPrefab, battle.ArtTwo.GetUnitsCount());
     }
 
     void Update()
     {
-        if (state.Battle_State == BattleState.Fight)
+        BattleDeltaTimeScript.Update();
+        if (BattleDeltaTimeScript.IsNextFrame())
         {
-            BattleDeltaTimeScript.Update();
-            if (BattleDeltaTimeScript.IsNextFrame())
-            {
-                battle.Update(BattleDeltaTimeScript.SpeedTime);
-            }
+            battle.Update(BattleDeltaTimeScript.SpeedTime);
         }
 
-        switch (state.Battle_State)
-        {
-            case BattleState.Choice:
-                drawChoice();
-                break;
-            case BattleState.Pre:
-                drawFight();
-                drawPre();
-                break;
-            case BattleState.Fight:
-                drawFight();
-                break;
-            case BattleState.Post:
-                drawFight();
-                drawPost();
-                break;
-            default:
-                Debug.Log("error in OnGUI in battleGUIScript");
-                break;
-        }
+        drawFight();
     }
-
-    #region CHOICE
-    void drawChoice()
-    {
-        ArmyUnitScript oneArmy = state.OneArmy;
-        ArmyUnitScript twoArmy = state.TwoArmy;
-        int oneID = oneArmy.GetCountryID();
-        int twoID = twoArmy.GetCountryID();
-
-        battle = new RealBattleScript(oneArmy, twoArmy);
-        state.ClickPreRealBattle();
-    }
-    #endregion
 
     #region FIGHT
-    void drawPre()
-    {
-        state.ClickFightRealBattle();
-    }
     void drawFight()
     {
         //if (oneAll == 0)
@@ -196,12 +161,12 @@ public class battleGUIScript : MonoBehaviour
     void drawPost()
     {
         #region VICTORY
-        ArmyUnitScript oneArmy = state.OneArmy;
-        ArmyUnitScript twoArmy = state.TwoArmy;
-        //int myID = Engine.World.GetMyCountryID();
-        int oneID = oneArmy.GetCountryID();
-        int twoID = twoArmy.GetCountryID();
-        bool isOneWin = state.GetIsOneWin();
+        //ArmyUnitScript oneArmy = state.OneArmy;
+        //ArmyUnitScript twoArmy = state.TwoArmy;
+        ////int myID = Engine.World.GetMyCountryID();
+        //int oneID = oneArmy.GetCountryID();
+        //int twoID = twoArmy.GetCountryID();
+        //bool isOneWin = state.GetIsOneWin();
         //bool isMyOne = myID == oneID;
 
         //string text = isMyOne == isOneWin ? Text.GetPopup(TextPopup.BattleInfo_Victory) : Text.GetPopup(TextPopup.BattleInfo_Defeat);

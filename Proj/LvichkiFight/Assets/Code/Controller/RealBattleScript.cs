@@ -496,15 +496,15 @@ public class RealBattleScript
     #endregion
 
     #region CTOR
-    public RealBattleScript(ArmyUnitScript armyOne, ArmyUnitScript armyTwo)
+    public RealBattleScript(ArmyUnitScript leftArmy, ArmyUnitScript rightArmy)
     {
         #region GROUPS
 
         #region INF
 
         #region ONE
-        int quot = (int)(armyOne.GetInfantry() / 1000);
-        float rem = armyOne.GetInfantry() - quot * 1000;
+        int quot = (int)(leftArmy.GetInfantry() / 1000);
+        float rem = leftArmy.GetInfantry() - quot * 1000;
 
         for (int i = 0; i < quot; i++)
         {
@@ -519,13 +519,11 @@ public class RealBattleScript
         {
             Debug.Log("error in RealBattleScript(constructor) : InfOne");
         }
-
-        this.moraleOne = armyOne.GetMorale();
         #endregion
 
         #region TWO
-        quot = (int)(armyTwo.GetInfantry() / 1000);
-        rem = armyTwo.GetInfantry() - quot * 1000;
+        quot = (int)(rightArmy.GetInfantry() / 1000);
+        rem = rightArmy.GetInfantry() - quot * 1000;
 
         for (int i = 0; i < quot; i++)
         {
@@ -547,7 +545,7 @@ public class RealBattleScript
         #region CAV
 
         #region ONE
-        float cavOneHalf = armyOne.GetCavalry() / 2.0f;
+        float cavOneHalf = leftArmy.GetCavalry() / 2.0f;
         quot = (int)(cavOneHalf / 1000);
         rem = cavOneHalf - quot * 1000;
 
@@ -569,7 +567,7 @@ public class RealBattleScript
         #endregion
 
         #region TWO
-        float cavTwoHalf = armyTwo.GetCavalry() / 2.0f;
+        float cavTwoHalf = rightArmy.GetCavalry() / 2.0f;
         quot = (int)(cavTwoHalf / 1000);
         rem = cavTwoHalf - quot * 1000;
 
@@ -595,8 +593,8 @@ public class RealBattleScript
         #region ART
 
         #region ONE
-        quot = (int)(armyOne.GetArtillery() / 1000);
-        rem = armyOne.GetArtillery() - quot * 1000;
+        quot = (int)(leftArmy.GetArtillery() / 1000);
+        rem = leftArmy.GetArtillery() - quot * 1000;
 
         for (int i = 0; i < quot; i++)
         {
@@ -614,8 +612,8 @@ public class RealBattleScript
         #endregion
 
         #region TWO
-        quot = (int)(armyTwo.GetArtillery() / 1000);
-        rem = armyTwo.GetArtillery() - quot * 1000;
+        quot = (int)(rightArmy.GetArtillery() / 1000);
+        rem = rightArmy.GetArtillery() - quot * 1000;
 
         for (int i = 0; i < quot; i++)
         {
