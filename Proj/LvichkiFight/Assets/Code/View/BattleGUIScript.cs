@@ -5,6 +5,8 @@ using Com.LuisPedroFonseca.ProCamera2D;
 
 public class BattleGUIScript : MonoBehaviour
 {
+    public enum AnimState { IDLE, WALK, HURT, ATTACK, DEATH }
+
     [SerializeField]
     private GameObject infPrefab;
     [SerializeField]
@@ -26,7 +28,10 @@ public class BattleGUIScript : MonoBehaviour
     {
         arr = new SkeletonAnimation[count];
         for (int i = 0; i < count; i++)
-        { arr[i] = Instantiate<GameObject>(prefab).GetComponent<SkeletonAnimation>(); }
+        {
+            arr[i] = Instantiate<GameObject>(prefab).GetComponent<SkeletonAnimation>();
+            arr[i].state.SetAnimation(0, AnimState.WALK.ToString(), true);
+        }
     }
 
 
@@ -79,8 +84,8 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
-        ArmyUnitScript leftArmy = new ArmyUnitScript(100000, 0, 0);
-        ArmyUnitScript rightArmy = new ArmyUnitScript(100000, 0, 0);
+        ArmyUnitScript leftArmy = new ArmyUnitScript(300000, 0, 0);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(300000, 0, 0);
         battle = new RealBattleScript(leftArmy, rightArmy);
 
         InitPrefabs(ref linf, infPrefab, battle.InfOne.GetUnitsCount());
