@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Spine.Unity;
+using Com.LuisPedroFonseca.ProCamera2D;
 
 public class BattleGUIScript : MonoBehaviour
 {
@@ -10,34 +12,85 @@ public class BattleGUIScript : MonoBehaviour
     [SerializeField]
     private GameObject artPrefab;
     private RealBattleScript battle;
-    private GameObject[] linf;
-    private GameObject[] lcav;
-    private GameObject[] lart;
-    private GameObject[] rinf;
-    private GameObject[] rcav;
-    private GameObject[] rart;
+    private SkeletonAnimation[] linf;
+    private SkeletonAnimation[] llcav;
+    private SkeletonAnimation[] lrcav;
+    private SkeletonAnimation[] lart;
+    private SkeletonAnimation[] rinf;
+    private SkeletonAnimation[] rlcav;
+    private SkeletonAnimation[] rrcav;
+    private SkeletonAnimation[] rart;
+    private bool cameraTargetFlag = true;
 
-    void InitPrefabs(GameObject[] arr, GameObject prefab, int count)
+    void InitPrefabs(ref SkeletonAnimation[] arr, GameObject prefab, int count)
     {
-        arr = new GameObject[count];
+        arr = new SkeletonAnimation[count];
         for (int i = 0; i < count; i++)
-        { arr[i] = Instantiate<GameObject>(prefab); }
+        { arr[i] = Instantiate<GameObject>(prefab).GetComponent<SkeletonAnimation>(); }
     }
+
+
+    #region CAMERA_TARGET
+    void addCameraTargets()
+    {
+        SkeletonAnimation[][] units = new SkeletonAnimation[8][];
+        units[0] = linf; units[1] = llcav; units[2] = lrcav; units[3] = lart;
+        units[4] = rinf; units[5] = rlcav; units[6] = rrcav; units[7] = rart;
+
+        float minX = float.MaxValue, maxX = float.MinValue;
+        float minY = float.MaxValue, maxY = float.MinValue;
+        SkeletonAnimation minXunit = null, maxXunit = null;
+        SkeletonAnimation minYunit = null, maxYunit = null;
+
+        for (int i = 0; i < units.Length; i++)
+        {
+            for (int j = 0; j < units[i].Length; j++)
+            {
+                if (units[i][j].gameObject == null) continue;
+                if (units[i][j].transform.position.x < minX)
+                {
+                    minX = units[i][j].transform.position.x;
+                    minXunit = units[i][j];
+                }
+                if (units[i][j].transform.position.x > maxX)
+                {
+                    maxX = units[i][j].transform.position.x;
+                    maxXunit = units[i][j];
+                }
+                if (units[i][j].transform.position.y < minY)
+                {
+                    minY = units[i][j].transform.position.y;
+                    minYunit = units[i][j];
+                }
+                if (units[i][j].transform.position.y > maxY)
+                {
+                    maxY = units[i][j].transform.position.y;
+                    maxYunit = units[i][j];
+                }
+            }
+        }
+
+        ProCamera2D.Instance.AddCameraTarget(minXunit.transform);
+        ProCamera2D.Instance.AddCameraTarget(maxXunit.transform);
+        ProCamera2D.Instance.AddCameraTarget(minYunit.transform);
+        ProCamera2D.Instance.AddCameraTarget(maxYunit.transform);
+    }
+    #endregion
 
     void Start()
     {
-        ArmyUnitScript leftArmy = new ArmyUnitScript(1, 0, 0);
-        ArmyUnitScript rightArmy = new ArmyUnitScript(1, 0, 0);
+        ArmyUnitScript leftArmy = new ArmyUnitScript(100000, 0, 0);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(100000, 0, 0);
         battle = new RealBattleScript(leftArmy, rightArmy);
 
-        InitPrefabs(linf, infPrefab, battle.InfOne.GetUnitsCount());
-        InitPrefabs(lcav, cavPrefab, battle.CavLeftOne.GetUnitsCount() +
-            battle.CavRightOne.GetUnitsCount());
-        InitPrefabs(lart, artPrefab, battle.ArtOne.GetUnitsCount());
-        InitPrefabs(rinf, infPrefab, battle.InfTwo.GetUnitsCount());
-        InitPrefabs(rcav, cavPrefab, battle.CavLeftTwo.GetUnitsCount() +
-            battle.CavRightTwo.GetUnitsCount());
-        InitPrefabs(rart, artPrefab, battle.ArtTwo.GetUnitsCount());
+        InitPrefabs(ref linf, infPrefab, battle.InfOne.GetUnitsCount());
+        InitPrefabs(ref llcav, cavPrefab, battle.CavLeftOne.GetUnitsCount());
+        InitPrefabs(ref lrcav, cavPrefab, battle.CavRightOne.GetUnitsCount());
+        InitPrefabs(ref lart, artPrefab, battle.ArtOne.GetUnitsCount());
+        InitPrefabs(ref rinf, infPrefab, battle.InfTwo.GetUnitsCount());
+        InitPrefabs(ref rlcav, cavPrefab, battle.CavLeftTwo.GetUnitsCount());
+        InitPrefabs(ref rrcav, cavPrefab, battle.CavRightTwo.GetUnitsCount());
+        InitPrefabs(ref rart, artPrefab, battle.ArtTwo.GetUnitsCount());
     }
 
     void Update()
@@ -48,10 +101,29 @@ public class BattleGUIScript : MonoBehaviour
             battle.Update(BattleDeltaTimeScript.SpeedTime);
         }
 
+        destroyDead();
         drawFight();
     }
 
-    #region FIGHT
+    #region DESTROY_DEAD
+    void _destroyDead(RealBattleScript.BattleGroup group, SkeletonAnimation[] arr)
+    {
+        for (int i = group.GetUnitsCount(); i < arr.Length; i++)
+        { if (arr[i] != null) Destroy(arr[i]); else break; }
+    }
+    void destroyDead()
+    {
+        _destroyDead(battle.InfOne, linf);
+        _destroyDead(battle.CavLeftOne, llcav);
+        _destroyDead(battle.CavRightOne, lrcav);
+        _destroyDead(battle.ArtOne, lart);
+        _destroyDead(battle.InfTwo, rinf);
+        _destroyDead(battle.CavLeftTwo, rlcav);
+        _destroyDead(battle.CavRightTwo, rrcav);
+        _destroyDead(battle.ArtTwo, rart);
+    }
+    #endregion
+
     void drawFight()
     {
         //if (oneAll == 0)
@@ -62,6 +134,30 @@ public class BattleGUIScript : MonoBehaviour
         //{
         //    GUIGUI.StateM.ClickPostRealBattle(true);
         //}
+
+        for (int i = 0; i < battle.InfOne.GetUnitsCount(); i++)
+        {
+            float side = RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf);
+            float left = battle.InfOne.GetUnit(i).X - side / 2.0f - RealBattleInfoScript.FieldLeft;
+            float top = battle.InfOne.GetUnit(i).Y - side / 2.0f - RealBattleInfoScript.FieldTop;
+            linf[i].transform.position = new Vector3(left, top, 0);
+        }
+
+        for (int i = 0; i < battle.InfTwo.GetUnitsCount(); i++)
+        {
+            float side = RealBattleInfoScript.GetUnitSide(RealBattleScript.RealBattleTroops.Inf);
+            float left = battle.InfTwo.GetUnit(i).X - side / 2.0f - RealBattleInfoScript.FieldLeft;
+            float top = battle.InfTwo.GetUnit(i).Y - side / 2.0f - RealBattleInfoScript.FieldTop;
+            rinf[i].transform.position = new Vector3(left, top, 0);
+            rinf[i].skeleton.SetColor(Color.blue);
+        }
+
+        if (cameraTargetFlag)
+        {
+            addCameraTargets();
+            cameraTargetFlag = false;
+        }
+
 
         //#region FIELD
         //GUIBox unitBox = new GUIBox(0, 0, 0, 0, "");
@@ -184,5 +280,4 @@ public class BattleGUIScript : MonoBehaviour
         //}
         #endregion
     }
-    #endregion
 }
