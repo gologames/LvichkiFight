@@ -1,0 +1,13 @@
+
+skeleton.png
+size: 1024,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+skeleton_sliced
+  rotate: false
+  xy: 2, 2
+  size: 803, 832
+  orig: 803, 832
+  offset: 0, 0
+  index: -1

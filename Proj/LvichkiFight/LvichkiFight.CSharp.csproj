@@ -274,8 +274,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Content\archer\skeleton.atlas.txt" />
+    <None Include="Assets\Content\archer_1\skeleton.atlas.txt" />
+    <None Include="Assets\Content\archer_2\skeleton.atlas.txt" />
+    <None Include="Assets\Content\horseman_1\skeleton.atlas.txt" />
+    <None Include="Assets\Content\horseman_2\skeleton.atlas.txt" />
     <None Include="Assets\Content\infantry\skeleton.atlas.txt" />
     <None Include="Assets\Content\raider\skeleton.atlas.txt" />
+    <None Include="Assets\Content\warrior_1\skeleton.atlas.txt" />
+    <None Include="Assets\Content\warror_2\skeleton.atlas.txt" />
     <None Include="Assets\Libs\Plugins\CodeStage\AdvancedFPSCounter\API.txt" />
     <None Include="Assets\Libs\Plugins\CodeStage\AdvancedFPSCounter\Changelog.txt" />
     <None Include="Assets\Libs\Plugins\CodeStage\AdvancedFPSCounter\Legacy\readme.txt" />
