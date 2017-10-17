@@ -11,12 +11,16 @@ public class BattleGUIScript : MonoBehaviour
     private int leftSkin;
     [SerializeField] [Range(0, 2)]
     private int rightSkin;
+    private int lballSkin;
+    private int rballSkin;
     [SerializeField]
     private GameObject[] infsPrefabs;
     [SerializeField]
     private GameObject[] cavsPrefabs;
     [SerializeField]
     private GameObject[] artsPrefabs;
+    [SerializeField]
+    private GameObject[] ballsPrefabs;
     private RealBattleScript battle;
     private SkeletonAnimation[] linf;
     private SkeletonAnimation[] llcav;
@@ -26,8 +30,11 @@ public class BattleGUIScript : MonoBehaviour
     private SkeletonAnimation[] rlcav;
     private SkeletonAnimation[] rrcav;
     private SkeletonAnimation[] rart;
+    private SpriteRenderer[] lball;
+    private SpriteRenderer[] rball;
     private bool cameraTargetFlag = true;
 
+    #region INIT_PREFABS
     void InitPrefabs(ref SkeletonAnimation[] arr, GameObject prefab, int count)
     {
         arr = new SkeletonAnimation[count];
@@ -37,6 +44,14 @@ public class BattleGUIScript : MonoBehaviour
             arr[i].state.SetAnimation(0, AnimState.WALK.ToString(), true);
         }
     }
+    void InitBallPrefabs(ref SpriteRenderer[] arr, GameObject prefab, int count)
+    {
+        count *= 2;
+        arr = new SpriteRenderer[count];
+        for (int i = 0; i < count; i++)
+        { arr[i] = Instantiate<GameObject>(prefab).GetComponent<SpriteRenderer>(); }
+    }
+    #endregion
 
     #region CAMERA_TARGET
     void addCameraTargets()
@@ -87,8 +102,8 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
-        ArmyUnitScript leftArmy = new ArmyUnitScript(30000, 20000, 10000);
-        ArmyUnitScript rightArmy = new ArmyUnitScript(30000, 20000, 10000);
+        ArmyUnitScript leftArmy = new ArmyUnitScript(40000, 0, 0);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(0, 0, 40000);
         battle = new RealBattleScript(leftArmy, rightArmy);
 
         InitPrefabs(ref linf, infsPrefabs[leftSkin], battle.InfOne.GetUnitsCount());
@@ -99,6 +114,11 @@ public class BattleGUIScript : MonoBehaviour
         InitPrefabs(ref rlcav, cavsPrefabs[rightSkin], battle.CavLeftTwo.GetUnitsCount());
         InitPrefabs(ref rrcav, cavsPrefabs[rightSkin], battle.CavRightTwo.GetUnitsCount());
         InitPrefabs(ref rart, artsPrefabs[rightSkin], battle.ArtTwo.GetUnitsCount());
+
+        lballSkin = leftSkin == 0 ? 0 : 1;
+        rballSkin = (lballSkin + 1) % 2;
+        InitBallPrefabs(ref lball, ballsPrefabs[lballSkin], battle.ArtOne.GetUnitsCount());
+        InitBallPrefabs(ref rball, ballsPrefabs[rballSkin], battle.ArtTwo.GetUnitsCount());
     }
 
     void Update()
@@ -140,22 +160,26 @@ public class BattleGUIScript : MonoBehaviour
     {
         for (int i = 0; i < group.GetUnitsCount(); i++)
         {
-            float side = RealBattleInfoScript.GetUnitSide(troop);
-            float left = group.GetUnit(i).X - side / 2.0f - RealBattleInfoScript.FieldLeft;
-            float top = group.GetUnit(i).Y - side / 2.0f - RealBattleInfoScript.FieldTop;
+            float half_side = RealBattleInfoScript.GetUnitSide(troop) / 2.0f;
+            float left = group.GetUnit(i).X - half_side - RealBattleInfoScript.FieldLeft;
+            float top = group.GetUnit(i).Y - half_side - RealBattleInfoScript.FieldTop;
             arr[i].transform.position = new Vector3(left, top, 0);
         }
     }
-    void _drawGroupBall(RealBattleScript.BallGroup group,
-        RealBattleScript.RealBattleTroops troop, SkeletonAnimation[] arr)
+    void _drawGroupBall(RealBattleScript.BallGroup group, SpriteRenderer[] arr)
     {
-        //for (int i = 0; i < group.Units.Count; i++)
-        //{
+        for (int i = 0; i < group.Units.Count; i++)
+        {
+            float half_side = RealBattleInfoScript.Ball_UnitSide / 2.0f;
+            float left = group.Units[i].Pos.x - half_side - RealBattleInfoScript.FieldLeft;
+            float top = group.Units[i].Pos.y - half_side - RealBattleInfoScript.FieldTop;
+            if (i >= arr.Length) break;
+            arr[i].transform.position = new Vector3(left, top, 0);
         //    unitBox.Left = battle.BallOne.Units[i].Pos.x - RealBattleInfoScript.Ball_UnitSide / 2.0f;
         //    unitBox.Top = battle.BallOne.Units[i].Pos.y - RealBattleInfoScript.Ball_UnitSide / 2.0f;
         //    unitBox.Width = unitBox.Height = RealBattleInfoScript.Ball_UnitSide;
         //    GUIGUI.CreateBox(unitBox, Unit_Art_One_Style);
-        //}
+        }
     }
 
     void drawFight()
@@ -177,6 +201,8 @@ public class BattleGUIScript : MonoBehaviour
         _drawGroup(battle.CavRightTwo, RealBattleScript.RealBattleTroops.CavRight, rrcav);
         _drawGroup(battle.ArtOne, RealBattleScript.RealBattleTroops.Art, lart);
         _drawGroup(battle.ArtTwo, RealBattleScript.RealBattleTroops.Art, rart);
+        _drawGroupBall(battle.BallOne, lball);
+        _drawGroupBall(battle.BallTwo, rball);
 
         if (cameraTargetFlag)
         {

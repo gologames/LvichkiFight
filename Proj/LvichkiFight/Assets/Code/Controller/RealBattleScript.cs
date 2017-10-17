@@ -492,7 +492,6 @@ public class RealBattleScript
     public BattleGroup ArtTwo = new BattleGroup(false, RealBattleTroops.Art);
     public BallGroup BallOne = new BallGroup();
     public BallGroup BallTwo = new BallGroup();
-    private float moraleOne;
     #endregion
 
     #region CTOR
@@ -1901,12 +1900,5 @@ public class RealBattleScript
     }
     #endregion
 
-    #endregion
-
-    #region MORALE
-    public float GetMoraleOne()
-    {
-        return moraleOne;
-    }
     #endregion
 }
