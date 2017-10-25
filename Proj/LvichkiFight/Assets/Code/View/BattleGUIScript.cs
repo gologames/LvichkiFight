@@ -102,8 +102,8 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
-        ArmyUnitScript leftArmy = new ArmyUnitScript(40000, 0, 0);
-        ArmyUnitScript rightArmy = new ArmyUnitScript(0, 0, 40000);
+        ArmyUnitScript leftArmy = new ArmyUnitScript(100000, 0, 0);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(100000, 0, 0);
         battle = new RealBattleScript(leftArmy, rightArmy);
 
         InitPrefabs(ref linf, infsPrefabs[leftSkin], battle.InfOne.GetUnitsCount());

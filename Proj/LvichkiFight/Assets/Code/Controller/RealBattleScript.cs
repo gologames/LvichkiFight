@@ -641,7 +641,7 @@ public class RealBattleScript
         Vector2 center = CalcStartPoint(RealBattleTroops.Inf, true);
         for (int i = 0; i < InfOne.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y + 1);
+            Vector2 dest = new Vector2(center.x + 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.Inf, true, center, dest, i);
             InfOne.GetUnit(i).X = startPoint.x;
             InfOne.GetUnit(i).Y = startPoint.y;
@@ -652,7 +652,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.Inf, false);
         for (int i = 0; i < InfTwo.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y - 1);
+            Vector2 dest = new Vector2(center.x - 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.Inf, false, center, dest, i);
             InfTwo.GetUnit(i).X = startPoint.x;
             InfTwo.GetUnit(i).Y = startPoint.y;
@@ -801,20 +801,16 @@ public class RealBattleScript
         if (type == RealBattleTroops.Inf)
         {
             _GetCountRowsColumns(isOne, type, out rows, out columns);
-            //point.x = RealBattleInfoScript.FieldLeft + RealBattleInfoScript.FieldWidth / 2.0f;
-            point.x = RealBattleInfoScript.InfOne_X;
 
             #region POINT_Y
             if (isOne)
             {
-                //point.y = RealBattleInfoScript.FieldTop + RealBattleInfoScript.FieldHeight * RealBattleInfoScript.Field_V_OnePartPer;
-                //point.y -= rows / 2.0f * (RealBattleInfoScript.GetUnitSide(RealBattleTroops.Inf) + RealBattleInfoScript.UnitMarchSpace);
+                point.x = RealBattleInfoScript.InfOne_X;
                 point.y = RealBattleInfoScript.InfOne_Y;
             }
             else
             {
-                //point.y = RealBattleInfoScript.FieldTop + RealBattleInfoScript.FieldHeight * (RealBattleInfoScript.Field_V_OnePartPer + RealBattleInfoScript.Field_V_FightPartPer);
-                //point.y += rows / 2.0f * (RealBattleInfoScript.GetUnitSide(RealBattleTroops.Inf) + RealBattleInfoScript.UnitMarchSpace);
+                point.x = RealBattleInfoScript.InfTwo_X;
                 point.y = RealBattleInfoScript.InfTwo_Y;
             }
             #endregion

@@ -3,23 +3,20 @@ using System.Collections;
 
 public class RealBattleInfoScript
 {
-    public const float FieldLeft = 320f;
-    public const float FieldTop = 16f;
-    public const float FieldWidth = 640f;
-    public const float FieldHeight = 688f;
+    public const float FieldLeft = 0f;
+    public const float FieldTop = 0f;
+    public const float FieldWidth = 1920f;
+    public const float FieldHeight = 1080f;
 
-    public const float CellGrid_Side = 43.27f;
-    public const int CellGrid_CountW = 15;
-    public const int CellGrid_CountH = 16;
-    //public const float CellGrid_Side = 53.78f;
-    //public const int CellGrid_CountW = 12;
-    //public const int CellGrid_CountH = 13;
+    public const float CellGrid_Side = 93.75f;
+    public const int CellGrid_CountW = 21;
+    public const int CellGrid_CountH = 12;
 
     #region START_POINTS
-    public const float InfOne_X = 640f;
-    public const float InfOne_Y = 163f;
-    public const float InfTwo_X = 640f;
-    public const float InfTwo_Y = 557f;
+    public const float InfOne_X = 400f;
+    public const float InfOne_Y = 540f;
+    public const float InfTwo_X = 1520f;
+    public const float InfTwo_Y = 540f;
 
     public const float CavLeftOne_X = 416f;
     public const float CavLeftOne_Y = 134f;
@@ -55,7 +52,7 @@ public class RealBattleInfoScript
     public const float UnitMarchSpace = 2f;
     public const float Ball_UnitSide = 4f;
 
-    //public const float Inf_Ratio_WidthToHeight = 5.0f / 2.0f;
+    //public const float Inf_Ratio_WidthToHeight = 25.0f / 12.0f;
     public const float Inf_Ratio_WidthToHeight = 25.0f / 12.0f;
     //public const float Cav_Ratio_WidthToHeight = 1.0f / 3.0f;
     public const float Cav_Ratio_WidthToHeight = 6.0f / 18.0f;
