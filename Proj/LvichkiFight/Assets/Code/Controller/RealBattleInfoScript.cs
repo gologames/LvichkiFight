@@ -18,20 +18,20 @@ public class RealBattleInfoScript
     public const float InfTwo_X = 1520f;
     public const float InfTwo_Y = 540f;
 
-    public const float CavLeftOne_X = 416f;
-    public const float CavLeftOne_Y = 134f;
-    public const float CavLeftTwo_X = 416f;
-    public const float CavLeftTwo_Y = 586f;
+    public const float CavLeftOne_X = 400f;
+    public const float CavLeftOne_Y = 740f;
+    public const float CavLeftTwo_X = 1520f;
+    public const float CavLeftTwo_Y = 740f;
 
-    public const float CavRightOne_X = 864f;
-    public const float CavRightOne_Y = 134f;
-    public const float CavRightTwo_X = 864f;
-    public const float CavRightTwo_Y = 586f;
+    public const float CavRightOne_X = 400f;
+    public const float CavRightOne_Y = 340f;
+    public const float CavRightTwo_X = 1520f;
+    public const float CavRightTwo_Y = 340f;
 
-    public const float ArtOne_X = 640f;
-    public const float ArtOne_Y = 59f;
-    public const float ArtTwo_X = 640f;
-    public const float ArtTwo_Y = 661f;
+    public const float ArtOne_X = 200f;
+    public const float ArtOne_Y = 540f;
+    public const float ArtTwo_X = 1720f;
+    public const float ArtTwo_Y = 540f;
     #endregion
 
     //public const float Field_V_FreePer = 0.03837209302325581f;

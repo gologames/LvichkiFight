@@ -667,7 +667,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.CavLeft, true);
         for (int i = 0; i < CavLeftOne.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y + 1);
+            Vector2 dest = new Vector2(center.x + 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.CavLeft, true, center, dest, i);
             CavLeftOne.GetUnit(i).X = startPoint.x;
             CavLeftOne.GetUnit(i).Y = startPoint.y;
@@ -676,7 +676,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.CavRight, true);
         for (int i = 0; i < CavRightOne.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y + 1);
+            Vector2 dest = new Vector2(center.x + 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.CavRight, true, center, dest, i);
             CavRightOne.GetUnit(i).X = startPoint.x;
             CavRightOne.GetUnit(i).Y = startPoint.y;
@@ -687,7 +687,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.CavLeft, false);
         for (int i = 0; i < CavLeftTwo.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y - 1);
+            Vector2 dest = new Vector2(center.x - 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.CavLeft, false, center, dest, i);
             CavLeftTwo.GetUnit(i).X = startPoint.x;
             CavLeftTwo.GetUnit(i).Y = startPoint.y;
@@ -696,7 +696,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.CavRight, false);
         for (int i = 0; i < CavRightTwo.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y - 1);
+            Vector2 dest = new Vector2(center.x - 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.CavRight, false, center, dest, i);
             CavRightTwo.GetUnit(i).X = startPoint.x;
             CavRightTwo.GetUnit(i).Y = startPoint.y;
@@ -711,7 +711,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.Art, true);
         for (int i = 0; i < ArtOne.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y + 1);
+            Vector2 dest = new Vector2(center.x + 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.Art, true, center, dest, i);
             ArtOne.GetUnit(i).X = startPoint.x;
             ArtOne.GetUnit(i).Y = startPoint.y;
@@ -722,7 +722,7 @@ public class RealBattleScript
         center = CalcStartPoint(RealBattleTroops.Art, false);
         for (int i = 0; i < ArtTwo.GetUnitsCount(); i++)
         {
-            Vector2 dest = new Vector2(center.x, center.y - 1);
+            Vector2 dest = new Vector2(center.x - 1, center.y);
             Vector2 startPoint = GetMarchPlace(RealBattleTroops.Art, false, center, dest, i);
             ArtTwo.GetUnit(i).X = startPoint.x;
             ArtTwo.GetUnit(i).Y = startPoint.y;
@@ -802,7 +802,6 @@ public class RealBattleScript
         {
             _GetCountRowsColumns(isOne, type, out rows, out columns);
 
-            #region POINT_Y
             if (isOne)
             {
                 point.x = RealBattleInfoScript.InfOne_X;
@@ -813,7 +812,6 @@ public class RealBattleScript
                 point.x = RealBattleInfoScript.InfTwo_X;
                 point.y = RealBattleInfoScript.InfTwo_Y;
             }
-            #endregion
         }
         #endregion
 
@@ -822,38 +820,32 @@ public class RealBattleScript
         {
             _GetCountRowsColumns(isOne, type, out rows, out columns);
 
-            #region POINT_X
             if (type == RealBattleTroops.CavLeft)
             {
-                //point.x = RealBattleInfoScript.FieldLeft +
-                //    RealBattleInfoScript.FieldWidth * (RealBattleInfoScript.Field_H_FreePer
-                //    + RealBattleInfoScript.Field_H_FreeCavPer / 2.0f);
-                point.x = RealBattleInfoScript.CavLeftOne_X;
+                if (isOne)
+                {
+                    point.x = RealBattleInfoScript.CavLeftOne_X;
+                    point.y = RealBattleInfoScript.CavLeftOne_Y;
+                }
+                else
+                {
+                    point.x = RealBattleInfoScript.CavLeftTwo_X;
+                    point.y = RealBattleInfoScript.CavLeftTwo_Y;
+                }
             }
             else
             {
-                //point.x = RealBattleInfoScript.FieldLeft +
-                //    RealBattleInfoScript.FieldWidth * (1.0f - RealBattleInfoScript.Field_H_FreePer
-                //    - RealBattleInfoScript.Field_H_FreeCavPer / 2.0f);
-                point.x = RealBattleInfoScript.CavRightOne_X;
+                if (isOne)
+                {
+                    point.x = RealBattleInfoScript.CavRightOne_X;
+                    point.y = RealBattleInfoScript.CavRightOne_Y;
+                }
+                else
+                {
+                    point.x = RealBattleInfoScript.CavRightTwo_X;
+                    point.y = RealBattleInfoScript.CavRightTwo_Y;
+                }
             }
-            #endregion
-
-            #region POINT_Y
-            if (isOne)
-            {
-                //point.y = RealBattleInfoScript.FieldTop + RealBattleInfoScript.FieldHeight * RealBattleInfoScript.Field_V_OnePartPer;
-                //point.y -= rows / 2.0f * (RealBattleInfoScript.GetUnitSide(RealBattleTroops.Inf) + RealBattleInfoScript.UnitMarchSpace);
-                point.y = RealBattleInfoScript.CavLeftOne_Y;
-            }
-            else
-            {
-                //point.y = RealBattleInfoScript.FieldTop + RealBattleInfoScript.FieldHeight * (RealBattleInfoScript.Field_V_OnePartPer + RealBattleInfoScript.Field_V_FightPartPer);
-                //point.y += rows / 2.0f * (RealBattleInfoScript.GetUnitSide(RealBattleTroops.Inf) + RealBattleInfoScript.UnitMarchSpace);
-                point.y = RealBattleInfoScript.CavLeftTwo_Y;
-            }
-            #endregion
-
         }
         #endregion
 
@@ -861,27 +853,17 @@ public class RealBattleScript
         else
         {
             _GetCountRowsColumns(isOne, type, out rows, out columns);
-            //point.x = RealBattleInfoScript.FieldLeft + RealBattleInfoScript.FieldWidth / 2.0f;
-            point.x = RealBattleInfoScript.ArtOne_X;
-
-            #region POINT_Y
+            
             if (isOne)
             {
-                //point.y = RealBattleInfoScript.FieldTop + RealBattleInfoScript.FieldHeight *
-                //    (RealBattleInfoScript.Field_V_OnePartPer - RealBattleInfoScript.Field_V_FreeArtFreeInfPer
-                //    - RealBattleInfoScript.Field_V_FreeArtFreePer);
-                //point.y -= rows / 2.0f * (RealBattleInfoScript.GetUnitSide(RealBattleTroops.Art) + RealBattleInfoScript.UnitMarchSpace);
+                point.x = RealBattleInfoScript.ArtOne_X;
                 point.y = RealBattleInfoScript.ArtOne_Y;
             }
             else
             {
-                //point.y = RealBattleInfoScript.FieldTop + RealBattleInfoScript.FieldHeight *
-                //    (RealBattleInfoScript.Field_V_OnePartPer + RealBattleInfoScript.Field_V_FightPartPer
-                //    + RealBattleInfoScript.Field_V_FreeArtFreeInfPer + RealBattleInfoScript.Field_V_FreeArtFreePer);
-                //point.y += rows / 2.0f * (RealBattleInfoScript.GetUnitSide(RealBattleTroops.Art) + RealBattleInfoScript.UnitMarchSpace);
+                point.x = RealBattleInfoScript.ArtTwo_X;
                 point.y = RealBattleInfoScript.ArtTwo_Y;
             }
-            #endregion
         }
         #endregion
 
