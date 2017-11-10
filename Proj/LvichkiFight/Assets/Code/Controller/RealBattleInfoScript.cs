@@ -19,14 +19,14 @@ public class RealBattleInfoScript
     public const float InfTwo_Y = 540f;
 
     public const float CavLeftOne_X = 400f;
-    public const float CavLeftOne_Y = 740f;
+    public const float CavLeftOne_Y = 650f;
     public const float CavLeftTwo_X = 1520f;
-    public const float CavLeftTwo_Y = 740f;
+    public const float CavLeftTwo_Y = 650f;
 
     public const float CavRightOne_X = 400f;
-    public const float CavRightOne_Y = 340f;
+    public const float CavRightOne_Y = 430f;
     public const float CavRightTwo_X = 1520f;
-    public const float CavRightTwo_Y = 340f;
+    public const float CavRightTwo_Y = 430f;
 
     public const float ArtOne_X = 200f;
     public const float ArtOne_Y = 540f;
@@ -47,13 +47,13 @@ public class RealBattleInfoScript
     //public const float Field_H_FreeCavFreeInfPer = 0.4f;
 
     public const float Inf_UnitSide = 8f;
-    public const float Cav_UnitSide = 8f;
+    public const float Cav_UnitSide = 10f;
     public const float Art_UnitSide = 11f;
     public const float UnitMarchSpace = 2f;
     public const float Ball_UnitSide = 4f;
 
     //public const float Inf_Ratio_WidthToHeight = 25.0f / 12.0f;
-    public const float Inf_Ratio_WidthToHeight = 25.0f / 12.0f;
+    public const float Inf_Ratio_WidthToHeight = 12.0f / 25.0f;
     //public const float Cav_Ratio_WidthToHeight = 1.0f / 3.0f;
     public const float Cav_Ratio_WidthToHeight = 6.0f / 18.0f;
     //public const float Art_Ratio_WidthToHeight = 4.0f / 1.0f;

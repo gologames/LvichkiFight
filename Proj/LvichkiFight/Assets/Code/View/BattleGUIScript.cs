@@ -102,8 +102,8 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
-        ArmyUnitScript leftArmy = new ArmyUnitScript(100000, 56000, 40000);
-        ArmyUnitScript rightArmy = new ArmyUnitScript(100000, 56000, 40000);
+        ArmyUnitScript leftArmy = new ArmyUnitScript(80000, 25000, 15000);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(80000, 25000, 15000);
         battle = new RealBattleScript(leftArmy, rightArmy);
 
         InitPrefabs(ref linf, infsPrefabs[leftSkin], battle.InfOne.GetUnitsCount());
@@ -153,8 +153,6 @@ public class BattleGUIScript : MonoBehaviour
     #endregion
 
     #region DRAW_FIGHT
-
-
     void _drawGroup(RealBattleScript.BattleGroup group,
         RealBattleScript.RealBattleTroops troop, SkeletonAnimation[] arr)
     {
@@ -164,6 +162,14 @@ public class BattleGUIScript : MonoBehaviour
             float left = group.GetUnit(i).X - half_side - RealBattleInfoScript.FieldLeft;
             float top = group.GetUnit(i).Y - half_side - RealBattleInfoScript.FieldTop;
             arr[i].transform.position = new Vector3(left, top, 0);
+            float scalePer = 1.0f - ((group.GetUnit(i).Y - RealBattleInfoScript.FieldLeft) /
+                (RealBattleInfoScript.FieldWidth - RealBattleInfoScript.FieldLeft));
+            scalePer *= scalePer;
+            float scaleFactor = troop == RealBattleScript.RealBattleTroops.Inf ||
+                troop == RealBattleScript.RealBattleTroops.Art ? 5.0f : 3.2f;
+            float xScale = scaleFactor * scalePer * (group.IsOne ? 1 : -1);
+            float yScale = scaleFactor * scalePer;
+            arr[i].transform.localScale = new Vector3(xScale, yScale, 1.0f);
         }
     }
     void _drawGroupBall(RealBattleScript.BallGroup group, SpriteRenderer[] arr)
@@ -175,10 +181,6 @@ public class BattleGUIScript : MonoBehaviour
             float top = group.Units[i].Pos.y - half_side - RealBattleInfoScript.FieldTop;
             if (i >= arr.Length) break;
             arr[i].transform.position = new Vector3(left, top, 0);
-        //    unitBox.Left = battle.BallOne.Units[i].Pos.x - RealBattleInfoScript.Ball_UnitSide / 2.0f;
-        //    unitBox.Top = battle.BallOne.Units[i].Pos.y - RealBattleInfoScript.Ball_UnitSide / 2.0f;
-        //    unitBox.Width = unitBox.Height = RealBattleInfoScript.Ball_UnitSide;
-        //    GUIGUI.CreateBox(unitBox, Unit_Art_One_Style);
         }
     }
 
