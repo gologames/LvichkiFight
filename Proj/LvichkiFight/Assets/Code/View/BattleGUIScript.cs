@@ -32,7 +32,17 @@ public class BattleGUIScript : MonoBehaviour
     private SkeletonAnimation[] rart;
     private SpriteRenderer[] lball;
     private SpriteRenderer[] rball;
-    private bool cameraTargetFlag = true;
+    private bool cameraTargetFlag = false;
+
+    #region MOVE_ZOOM_CAMERA
+    private float zoomSpeed = 110.0f;
+    private float targetOrtho;
+    private float smoothSpeed = 200.0f;
+    private float minOrtho = 50.0f;
+    private float maxOrtho = 600.0f;
+    private int edgeScreenBound = 20;
+    private float moveCameraSpeed = 1700.0f;
+    #endregion
 
     #region INIT_PREFABS
     void InitPrefabs(ref SkeletonAnimation[] arr, GameObject prefab, int count)
@@ -41,7 +51,7 @@ public class BattleGUIScript : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             arr[i] = Instantiate<GameObject>(prefab).GetComponent<SkeletonAnimation>();
-            arr[i].state.SetAnimation(0, AnimState.WALK.ToString(), true);
+            SetAnim(arr[i], AnimState.IDLE);
         }
     }
     void InitBallPrefabs(ref SpriteRenderer[] arr, GameObject prefab, int count)
@@ -54,7 +64,7 @@ public class BattleGUIScript : MonoBehaviour
     #endregion
 
     #region CAMERA_TARGET
-    void addCameraTargets()
+    void AddCameraTargets()
     {
         SkeletonAnimation[][] units = new SkeletonAnimation[8][];
         units[0] = linf; units[1] = llcav; units[2] = lrcav; units[3] = lart;
@@ -119,6 +129,10 @@ public class BattleGUIScript : MonoBehaviour
         rballSkin = (lballSkin + 1) % 2;
         InitBallPrefabs(ref lball, ballsPrefabs[lballSkin], battle.ArtOne.GetUnitsCount());
         InitBallPrefabs(ref rball, ballsPrefabs[rballSkin], battle.ArtTwo.GetUnitsCount());
+    
+        #region ZOOM_CAMERA
+        targetOrtho = Camera.main.orthographicSize;
+        #endregion
     }
 
     void Update()
@@ -131,7 +145,63 @@ public class BattleGUIScript : MonoBehaviour
 
         destroyDead();
         drawFight();
+        MoveCamera();
+        ZoomCamera();
     }
+
+    #region ANIMATION
+    void SetAnim(SkeletonAnimation anim, AnimState state)
+    {
+        if (anim.AnimationName != state.ToString())
+        { anim.state.SetAnimation(0, state.ToString(), true); }
+    }
+    #endregion
+
+    #region MOVE_ZOOM_CAMERA
+    void MoveCamera()
+    {
+        Vector3 cameraPos = Camera.main.transform.position;
+        float speed = moveCameraSpeed /
+            (2.0f - (Camera.main.orthographicSize - minOrtho) / maxOrtho);
+        if (Input.mousePosition.x > Screen.width - edgeScreenBound)
+        {
+            cameraPos = new Vector3(cameraPos.x + moveCameraSpeed
+                * Time.deltaTime, cameraPos.y, cameraPos.z);
+        }
+
+        if (Input.mousePosition.x < edgeScreenBound)
+        {
+            cameraPos = new Vector3(cameraPos.x - moveCameraSpeed
+                * Time.deltaTime, cameraPos.y, cameraPos.z);
+        }
+
+        if (Input.mousePosition.y > Screen.height - edgeScreenBound)
+        {
+            cameraPos = new Vector3(cameraPos.x, cameraPos.y +
+                moveCameraSpeed * Time.deltaTime, cameraPos.z);
+        }
+
+        if (Input.mousePosition.y < edgeScreenBound)
+        {
+            cameraPos = new Vector3(cameraPos.x, cameraPos.y -
+                moveCameraSpeed * Time.deltaTime, cameraPos.z);
+        }
+        Camera.main.transform.position = cameraPos;
+    }
+    void ZoomCamera()
+    {
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0.0f)
+        {
+            targetOrtho -= scroll * zoomSpeed;
+            targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
+        }
+
+        Camera.main.orthographicSize = Mathf.MoveTowards(
+            Camera.main.orthographicSize,
+            targetOrtho, smoothSpeed * Time.deltaTime);
+    }
+    #endregion
 
     #region DESTROY_DEAD
     void _destroyDead(RealBattleScript.BattleGroup group, SkeletonAnimation[] arr)
@@ -158,6 +228,7 @@ public class BattleGUIScript : MonoBehaviour
     {
         for (int i = 0; i < group.GetUnitsCount(); i++)
         {
+            #region SCALE_AND_POSITION
             float half_side = RealBattleInfoScript.GetUnitSide(troop) / 2.0f;
             float left = group.GetUnit(i).X - half_side - RealBattleInfoScript.FieldLeft;
             float top = group.GetUnit(i).Y - half_side - RealBattleInfoScript.FieldTop;
@@ -170,6 +241,23 @@ public class BattleGUIScript : MonoBehaviour
             float xScale = scaleFactor * scalePer * (group.IsOne ? 1 : -1);
             float yScale = scaleFactor * scalePer;
             arr[i].transform.localScale = new Vector3(xScale, yScale, 1.0f);
+            #endregion
+
+            #region ANIM
+            switch (group.GetUnit(i).State)
+            {
+                case RealBattleScript.UnitStates.Stay:
+                    SetAnim(arr[i], AnimState.IDLE);
+                    break;
+                case RealBattleScript.UnitStates.MoveOne:
+                case RealBattleScript.UnitStates.MoveAll:
+                    SetAnim(arr[i], AnimState.WALK);
+                    break;
+                case RealBattleScript.UnitStates.Fight:
+                    SetAnim(arr[i], AnimState.ATTACK);
+                    break;
+            }
+            #endregion
         }
     }
     void _drawGroupBall(RealBattleScript.BallGroup group, SpriteRenderer[] arr)
@@ -208,7 +296,7 @@ public class BattleGUIScript : MonoBehaviour
 
         if (cameraTargetFlag)
         {
-            addCameraTargets();
+            AddCameraTargets();
             cameraTargetFlag = false;
         }
 
