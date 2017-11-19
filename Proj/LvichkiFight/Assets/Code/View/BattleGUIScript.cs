@@ -264,11 +264,23 @@ public class BattleGUIScript : MonoBehaviour
     {
         for (int i = 0; i < group.Units.Count; i++)
         {
+            #region SCALE_AND_POSITION
+            RealBattleScript.BallUnit ball = group.Units[i];
             float half_side = RealBattleInfoScript.Ball_UnitSide / 2.0f;
-            float left = group.Units[i].Pos.x - half_side - RealBattleInfoScript.FieldLeft;
-            float top = group.Units[i].Pos.y - half_side - RealBattleInfoScript.FieldTop;
+            float left = ball.Pos.x - half_side - RealBattleInfoScript.FieldLeft;
+            float top = ball.Pos.y - half_side - RealBattleInfoScript.FieldTop;
             if (i >= arr.Length) break;
             arr[i].transform.position = new Vector3(left, top, 0);
+            #endregion
+
+            #region ROTATION
+            Vector3 dir = ball.Dest - ball.Pos;
+            if (dir != Vector3.zero)
+            {
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90.0f;
+                arr[i].transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+            }
+            #endregion
         }
     }
 
