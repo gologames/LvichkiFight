@@ -39,9 +39,11 @@ public class BattleGUIScript : MonoBehaviour
     private float targetOrtho;
     private float smoothSpeed = 200.0f;
     private float minOrtho = 50.0f;
-    private float maxOrtho = 600.0f;
+    private float maxOrtho = 296.0f;
     private int edgeScreenBound = 20;
     private float moveCameraSpeed = 1700.0f;
+    [SerializeField]
+    private SpriteRenderer back;
     #endregion
 
     #region INIT_PREFABS
@@ -163,30 +165,45 @@ public class BattleGUIScript : MonoBehaviour
         Vector3 cameraPos = Camera.main.transform.position;
         float speed = moveCameraSpeed /
             (2.0f - (Camera.main.orthographicSize - minOrtho) / maxOrtho);
+        float vSize = Camera.main.orthographicSize;
+        float hSize = Camera.main.orthographicSize * Screen.width / Screen.height;
         if (Input.mousePosition.x > Screen.width - edgeScreenBound)
         {
-            cameraPos = new Vector3(cameraPos.x + moveCameraSpeed
-                * Time.deltaTime, cameraPos.y, cameraPos.z);
+            float newX = cameraPos.x + moveCameraSpeed * Time.deltaTime;
+            float newRight = newX + hSize;
+            newRight = Mathf.Clamp(newRight, back.bounds.min.x, back.bounds.max.x);
+            newX = newRight - hSize;
+            cameraPos = new Vector3(newX, cameraPos.y, cameraPos.z);
         }
 
         if (Input.mousePosition.x < edgeScreenBound)
         {
-            cameraPos = new Vector3(cameraPos.x - moveCameraSpeed
-                * Time.deltaTime, cameraPos.y, cameraPos.z);
+            float newX = cameraPos.x - moveCameraSpeed * Time.deltaTime;
+            float newLeft = newX - hSize;
+            newLeft = Mathf.Clamp(newLeft, back.bounds.min.x, back.bounds.max.x);
+            newX = newLeft + hSize;
+            cameraPos = new Vector3(newX, cameraPos.y, cameraPos.z);
         }
 
         if (Input.mousePosition.y > Screen.height - edgeScreenBound)
         {
-            cameraPos = new Vector3(cameraPos.x, cameraPos.y +
-                moveCameraSpeed * Time.deltaTime, cameraPos.z);
+            float newY = cameraPos.y + moveCameraSpeed * Time.deltaTime;
+            float newUp = newY + vSize;
+            newUp = Mathf.Clamp(newUp, back.bounds.min.y, back.bounds.max.y);
+            newY = newUp - vSize;
+            cameraPos = new Vector3(cameraPos.x, newY, cameraPos.z);
         }
 
         if (Input.mousePosition.y < edgeScreenBound)
         {
-            cameraPos = new Vector3(cameraPos.x, cameraPos.y -
-                moveCameraSpeed * Time.deltaTime, cameraPos.z);
+            float newY = cameraPos.y - moveCameraSpeed * Time.deltaTime;
+            float newDown = newY - vSize;
+            newDown = Mathf.Clamp(newDown, back.bounds.min.y, back.bounds.max.y);
+            newY = newDown + vSize;
+            cameraPos = new Vector3(cameraPos.x, newY, cameraPos.z);
         }
         Camera.main.transform.position = cameraPos;
+        //Debug.logger(Camera.main.transform.position.y Camera.main.orthographicSize)
     }
     void ZoomCamera()
     {
@@ -200,6 +217,34 @@ public class BattleGUIScript : MonoBehaviour
         Camera.main.orthographicSize = Mathf.MoveTowards(
             Camera.main.orthographicSize,
             targetOrtho, smoothSpeed * Time.deltaTime);
+
+        #region REPLACE_INTO_BOUNDS
+        float vSize = targetOrtho;
+        float hSize = targetOrtho * Screen.width / Screen.height;
+
+        //float maxX = back.bounds.max.x 
+
+        float newX = Camera.main.transform.position.x;
+        float newRight = newX + hSize;
+        newRight = Mathf.Clamp(newRight, back.bounds.min.x, back.bounds.max.x);
+        newX = newRight - hSize;
+
+        float newLeft = newX + hSize;
+        newLeft = Mathf.Clamp(newLeft, back.bounds.min.x, back.bounds.max.x);
+        newX = newRight - hSize;
+
+        float newY = Camera.main.transform.position.y;
+        float newUp = newY + vSize;
+        newUp = Mathf.Clamp(newUp, back.bounds.min.y, back.bounds.max.y);
+        newY = newUp - vSize;
+
+        float newDown = newY - vSize;
+        newDown = Mathf.Clamp(newDown, back.bounds.min.y, back.bounds.max.y);
+        newY = newDown + vSize;
+
+        Camera.main.transform.position = new Vector3(newX,
+            newY, Camera.main.transform.position.z);
+        #endregion
     }
     #endregion
 
