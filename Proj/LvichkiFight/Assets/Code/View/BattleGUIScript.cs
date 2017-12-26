@@ -41,7 +41,7 @@ public class BattleGUIScript : MonoBehaviour
     private float minOrtho = 50.0f;
     private float maxOrtho = 296.0f;
     private int edgeScreenBound = 20;
-    private float moveCameraSpeed = 1700.0f;
+    private float moveCameraSpeed = 170.0f;
     [SerializeField]
     private SpriteRenderer back;
     #endregion
@@ -170,40 +170,27 @@ public class BattleGUIScript : MonoBehaviour
         if (Input.mousePosition.x > Screen.width - edgeScreenBound)
         {
             float newX = cameraPos.x + moveCameraSpeed * Time.deltaTime;
-            float newRight = newX + hSize;
-            newRight = Mathf.Clamp(newRight, back.bounds.min.x, back.bounds.max.x);
-            newX = newRight - hSize;
             cameraPos = new Vector3(newX, cameraPos.y, cameraPos.z);
         }
 
         if (Input.mousePosition.x < edgeScreenBound)
         {
             float newX = cameraPos.x - moveCameraSpeed * Time.deltaTime;
-            float newLeft = newX - hSize;
-            newLeft = Mathf.Clamp(newLeft, back.bounds.min.x, back.bounds.max.x);
-            newX = newLeft + hSize;
             cameraPos = new Vector3(newX, cameraPos.y, cameraPos.z);
         }
 
         if (Input.mousePosition.y > Screen.height - edgeScreenBound)
         {
             float newY = cameraPos.y + moveCameraSpeed * Time.deltaTime;
-            float newUp = newY + vSize;
-            newUp = Mathf.Clamp(newUp, back.bounds.min.y, back.bounds.max.y);
-            newY = newUp - vSize;
             cameraPos = new Vector3(cameraPos.x, newY, cameraPos.z);
         }
 
         if (Input.mousePosition.y < edgeScreenBound)
         {
             float newY = cameraPos.y - moveCameraSpeed * Time.deltaTime;
-            float newDown = newY - vSize;
-            newDown = Mathf.Clamp(newDown, back.bounds.min.y, back.bounds.max.y);
-            newY = newDown + vSize;
             cameraPos = new Vector3(cameraPos.x, newY, cameraPos.z);
         }
         Camera.main.transform.position = cameraPos;
-        //Debug.logger(Camera.main.transform.position.y Camera.main.orthographicSize)
     }
     void ZoomCamera()
     {
@@ -222,16 +209,14 @@ public class BattleGUIScript : MonoBehaviour
         float vSize = targetOrtho;
         float hSize = targetOrtho * Screen.width / Screen.height;
 
-        //float maxX = back.bounds.max.x 
-
         float newX = Camera.main.transform.position.x;
         float newRight = newX + hSize;
         newRight = Mathf.Clamp(newRight, back.bounds.min.x, back.bounds.max.x);
         newX = newRight - hSize;
 
-        float newLeft = newX + hSize;
+        float newLeft = newX - hSize;
         newLeft = Mathf.Clamp(newLeft, back.bounds.min.x, back.bounds.max.x);
-        newX = newRight - hSize;
+        newX = newLeft + hSize;
 
         float newY = Camera.main.transform.position.y;
         float newUp = newY + vSize;
