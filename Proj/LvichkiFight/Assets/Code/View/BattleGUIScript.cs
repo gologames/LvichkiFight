@@ -114,9 +114,18 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
-        ArmyUnitScript leftArmy = new ArmyUnitScript(80000, 25000, 15000);
-        ArmyUnitScript rightArmy = new ArmyUnitScript(80000, 25000, 15000);
+        ArmyUnitScript leftArmy = new ArmyUnitScript(
+            PlayerPrefs.GetInt(StartFight.LeftInfKey) * 1000,
+            PlayerPrefs.GetInt(StartFight.LeftCavKey) * 1000,
+            PlayerPrefs.GetInt(StartFight.LeftArtKey) * 1000);
+        ArmyUnitScript rightArmy = new ArmyUnitScript(
+            PlayerPrefs.GetInt(StartFight.RightInfKey) * 1000,
+            PlayerPrefs.GetInt(StartFight.RightCavKey) * 1000,
+            PlayerPrefs.GetInt(StartFight.RightArtKey) * 1000);
         battle = new RealBattleScript(leftArmy, rightArmy);
+
+        leftSkin = PlayerPrefs.GetInt(StartFight.LeftSkinKey);
+        rightSkin = PlayerPrefs.GetInt(StartFight.RightSkinKey);
 
         InitPrefabs(ref linf, infsPrefabs[leftSkin], battle.InfOne.GetUnitsCount());
         InitPrefabs(ref llcav, cavsPrefabs[leftSkin], battle.CavLeftOne.GetUnitsCount());

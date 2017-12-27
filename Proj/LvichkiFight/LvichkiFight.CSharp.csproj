@@ -69,6 +69,8 @@
     <Compile Include="Assets\Code\Controller\RealBattleInfoScript.cs" />
     <Compile Include="Assets\Code\Controller\RealBattleScript.cs" />
     <Compile Include="Assets\Code\SampleMalta\ExampleLvichka.cs" />
+    <Compile Include="Assets\Code\Start\StartFight.cs" />
+    <Compile Include="Assets\Code\Start\TestStartFight.cs" />
     <Compile Include="Assets\Code\View\BattleGUIScript.cs" />
     <Compile Include="Assets\Libs\Plugins\CodeStage\AdvancedFPSCounter\Examples\APITester.cs" />
     <Compile Include="Assets\Libs\Plugins\CodeStage\AdvancedFPSCounter\Scripts\AFPSCounter.cs" />
