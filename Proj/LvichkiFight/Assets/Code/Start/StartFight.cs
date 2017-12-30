@@ -8,7 +8,12 @@ public static class StartFight
     //Inf_MaxCount = 300
     //Cav_MaxCount = 216
     //Art_MaxCount = 100
+    //WinKey = "Left" or "Right"
 
+    public const string WinKey = "IsLeftWin";
+    public const string LeftWinKey = "Left";
+    public const string RightWinKey = "Right";
+    public const string AfterSceneNumKey = "AfterSceneNum";
     public const string LeftSkinKey = "LeftSkin";
     public const string RightSkinKey = "RightSkin";
     public const string LeftInfKey = "LeftInf";
@@ -19,11 +24,12 @@ public static class StartFight
     public const string RightArtKey = "RightArt";
 
     public static void LoadFightScene(
-        int fightSceneNum,
+        int fightSceneNum, int afterFightSceneNum,
         int leftSkin, int rightSkin,
         int leftInf, int leftCav, int leftArt,
         int rightInf, int rightCav, int rightArt)
     {
+        PlayerPrefs.SetInt(AfterSceneNumKey, afterFightSceneNum);
         PlayerPrefs.SetInt(LeftSkinKey, leftSkin);
         PlayerPrefs.SetInt(RightSkinKey, rightSkin);
         PlayerPrefs.SetInt(LeftInfKey, leftInf);

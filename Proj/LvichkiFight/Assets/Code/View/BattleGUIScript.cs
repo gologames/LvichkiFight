@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using Spine.Unity;
 using Com.LuisPedroFonseca.ProCamera2D;
@@ -150,14 +151,13 @@ public class BattleGUIScript : MonoBehaviour
     {
         BattleDeltaTimeScript.Update();
         if (BattleDeltaTimeScript.IsNextFrame())
-        {
-            battle.Update(BattleDeltaTimeScript.SpeedTime);
-        }
+        { battle.Update(BattleDeltaTimeScript.SpeedTime); }
 
-        destroyDead();
+        DestroyDead();
         drawFight();
         MoveCamera();
         ZoomCamera();
+        CheckVictory();
     }
 
     #region ANIMATION
@@ -243,21 +243,21 @@ public class BattleGUIScript : MonoBehaviour
     #endregion
 
     #region DESTROY_DEAD
-    void _destroyDead(RealBattleScript.BattleGroup group, SkeletonAnimation[] arr)
+    void _DestroyDead(RealBattleScript.BattleGroup group, SkeletonAnimation[] arr)
     {
         for (int i = group.GetUnitsCount(); i < arr.Length; i++)
         { if (arr[i] != null) Destroy(arr[i].gameObject); else break; }
     }
-    void destroyDead()
+    void DestroyDead()
     {
-        _destroyDead(battle.InfOne, linf);
-        _destroyDead(battle.CavLeftOne, llcav);
-        _destroyDead(battle.CavRightOne, lrcav);
-        _destroyDead(battle.ArtOne, lart);
-        _destroyDead(battle.InfTwo, rinf);
-        _destroyDead(battle.CavLeftTwo, rlcav);
-        _destroyDead(battle.CavRightTwo, rrcav);
-        _destroyDead(battle.ArtTwo, rart);
+        _DestroyDead(battle.InfOne, linf);
+        _DestroyDead(battle.CavLeftOne, llcav);
+        _DestroyDead(battle.CavRightOne, lrcav);
+        _DestroyDead(battle.ArtOne, lart);
+        _DestroyDead(battle.InfTwo, rinf);
+        _DestroyDead(battle.CavLeftTwo, rlcav);
+        _DestroyDead(battle.CavRightTwo, rrcav);
+        _DestroyDead(battle.ArtTwo, rart);
     }
     #endregion
 
@@ -376,30 +376,35 @@ public class BattleGUIScript : MonoBehaviour
     }
     #endregion
 
-    void drawPost()
+    #region CHECK_VICTORY
+    void CheckVictory()
     {
-        #region VICTORY
-        //ArmyUnitScript oneArmy = state.OneArmy;
-        //ArmyUnitScript twoArmy = state.TwoArmy;
-        ////int myID = Engine.World.GetMyCountryID();
-        //int oneID = oneArmy.GetCountryID();
-        //int twoID = twoArmy.GetCountryID();
-        //bool isOneWin = state.GetIsOneWin();
-        //bool isMyOne = myID == oneID;
+        int leftInf = (int)battle.InfOne.GetCountReal();
+        int leftCav = (int)(battle.CavLeftOne.GetCountReal() +
+            battle.CavRightOne.GetCountReal());
+        int leftArt = (int)battle.ArtOne.GetCountReal();
+        int leftAll = leftInf + leftCav + leftArt;
 
-        //string text = isMyOne == isOneWin ? Text.GetPopup(TextPopup.BattleInfo_Victory) : Text.GetPopup(TextPopup.BattleInfo_Defeat);
-        //if (GUIGUI.CreateButton(GUIGUI.GUIel.Battle_Pre_StartBattle, text, Choice_But_Style))
-        //{
-        //    #region CHANGE_UNTS_COUNT
-        //    oneArmy.SubInfantry(oneArmy.GetInfantry() - battle.InfOne.GetCountReal());
-        //    oneArmy.SubCavalry(oneArmy.GetCavalry() - battle.CavLeftOne.GetCountReal() - battle.CavRightOne.GetCountReal());
-        //    oneArmy.SubArtillery(oneArmy.GetArtillery() - battle.ArtOne.GetCountReal());
+        int rightInf = (int)battle.InfTwo.GetCountReal();
+        int rightCav = (int)(battle.CavLeftTwo.GetCountReal() +
+            battle.CavRightTwo.GetCountReal());
+        int rightArt = (int)battle.ArtTwo.GetCountReal();
+        int rightAll = rightInf + rightCav + rightArt;
 
-        //    twoArmy.SubInfantry(twoArmy.GetInfantry() - battle.InfTwo.GetCountReal());
-        //    twoArmy.SubCavalry(twoArmy.GetCavalry() - battle.CavLeftTwo.GetCountReal() - battle.CavRightTwo.GetCountReal());
-        //    twoArmy.SubArtillery(twoArmy.GetArtillery() - battle.ArtTwo.GetCountReal());
-        //    #endregion
-        //}
-        #endregion
+        if (leftAll == 0  || rightAll == 0)
+        {
+            PlayerPrefs.SetInt(StartFight.LeftInfKey, leftInf / 1000);
+            PlayerPrefs.SetInt(StartFight.LeftCavKey, leftCav / 1000);
+            PlayerPrefs.SetInt(StartFight.LeftArtKey, leftArt / 1000);
+            PlayerPrefs.SetInt(StartFight.RightInfKey, rightInf / 1000);
+            PlayerPrefs.SetInt(StartFight.RightCavKey, rightCav / 1000);
+            PlayerPrefs.SetInt(StartFight.RightArtKey, rightArt / 1000);
+            PlayerPrefs.SetString(StartFight.WinKey,
+                leftAll == 0 ? StartFight.RightWinKey :
+                StartFight.LeftWinKey);
+            SceneManager.LoadScene(PlayerPrefs.GetInt(
+                StartFight.AfterSceneNumKey));
+        }
     }
+    #endregion
 }
