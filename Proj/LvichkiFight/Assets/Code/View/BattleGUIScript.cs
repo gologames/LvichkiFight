@@ -34,6 +34,7 @@ public class BattleGUIScript : MonoBehaviour
     private SpriteRenderer[] lball;
     private SpriteRenderer[] rball;
     private bool cameraTargetFlag = false;
+    private IInputManager inputManager;
 
     #region MOVE_ZOOM_CAMERA
     private float zoomSpeed = 110.0f;
@@ -41,7 +42,6 @@ public class BattleGUIScript : MonoBehaviour
     private float smoothSpeed = 200.0f;
     private float minOrtho = 50.0f;
     private float maxOrtho = 296.0f;
-    private int edgeScreenBound = 20;
     private float moveCameraSpeed = 170.0f;
     [SerializeField]
     private SpriteRenderer back;
@@ -115,6 +115,7 @@ public class BattleGUIScript : MonoBehaviour
 
     void Start()
     {
+        inputManager = new InputManager();
         ArmyUnitScript leftArmy = new ArmyUnitScript(
             PlayerPrefs.GetInt(StartFight.LeftInfKey) * 1000,
             PlayerPrefs.GetInt(StartFight.LeftCavKey) * 1000,
@@ -176,25 +177,25 @@ public class BattleGUIScript : MonoBehaviour
             (2.0f - (Camera.main.orthographicSize - minOrtho) / maxOrtho);
         float vSize = Camera.main.orthographicSize;
         float hSize = Camera.main.orthographicSize * Screen.width / Screen.height;
-        if (Input.mousePosition.x > Screen.width - edgeScreenBound)
+        if (inputManager.IsMoveRight())
         {
             float newX = cameraPos.x + moveCameraSpeed * Time.deltaTime;
             cameraPos = new Vector3(newX, cameraPos.y, cameraPos.z);
         }
 
-        if (Input.mousePosition.x < edgeScreenBound)
+        if (inputManager.IsMoveLeft())
         {
             float newX = cameraPos.x - moveCameraSpeed * Time.deltaTime;
             cameraPos = new Vector3(newX, cameraPos.y, cameraPos.z);
         }
 
-        if (Input.mousePosition.y > Screen.height - edgeScreenBound)
+        if (inputManager.IsMoveUp())
         {
             float newY = cameraPos.y + moveCameraSpeed * Time.deltaTime;
             cameraPos = new Vector3(cameraPos.x, newY, cameraPos.z);
         }
 
-        if (Input.mousePosition.y < edgeScreenBound)
+        if (inputManager.IsMoveDown())
         {
             float newY = cameraPos.y - moveCameraSpeed * Time.deltaTime;
             cameraPos = new Vector3(cameraPos.x, newY, cameraPos.z);
@@ -203,7 +204,7 @@ public class BattleGUIScript : MonoBehaviour
     }
     void ZoomCamera()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        float scroll = inputManager.GetScroll();
         if (scroll != 0.0f)
         {
             targetOrtho -= scroll * zoomSpeed;
