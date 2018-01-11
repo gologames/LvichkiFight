@@ -26,6 +26,7 @@ public class RealBattleScript
         public float Delta;
         public UnitStates State;
         public float Angle;
+        public bool ArtShoot;
 
         public BattleUnit(bool isOne, RealBattleTroops type, float count, float angle)
         {
@@ -37,6 +38,7 @@ public class RealBattleScript
             this.Delta = 0;
             this.State = UnitStates.Stay;
             this.Angle = angle;
+            this.ArtShoot = false;
         }
     }
     public class BattleGroup
@@ -1275,6 +1277,7 @@ public class RealBattleScript
                     Vector2 dest = new Vector2(enemy.X, enemy.Y);
                     float damage = me.Count * RealBattleInfoScript.ArtBallDamagePerUnit;
                     ballGroup.Units.Add(new BallUnit(pos, dest, damage));
+                    me.ArtShoot = true;
                 }
 
                 if (enemy.Count < 0)

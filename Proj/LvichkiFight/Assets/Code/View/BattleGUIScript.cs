@@ -6,7 +6,7 @@ using Com.LuisPedroFonseca.ProCamera2D;
 
 public class BattleGUIScript : MonoBehaviour
 {
-    public enum AnimState { IDLE, WALK, HURT, ATTACK, DEATH }
+    public enum AnimState { IDLE, WALK, HURT, ATTACK, BOW_SHOOT, DEATH }
 
     [SerializeField] [Range(0, 2)]
     private int leftSkin;
@@ -162,10 +162,10 @@ public class BattleGUIScript : MonoBehaviour
     }
 
     #region ANIMATION
-    void SetAnim(SkeletonAnimation anim, AnimState state)
+    void SetAnim(SkeletonAnimation anim, AnimState state, bool loop = true)
     {
         if (anim.AnimationName != state.ToString())
-        { anim.state.SetAnimation(0, state.ToString(), true); }
+        { anim.state.SetAnimation(0, state.ToString(), loop); }
     }
     #endregion
 
@@ -284,7 +284,8 @@ public class BattleGUIScript : MonoBehaviour
             #endregion
 
             #region ANIM
-            switch (group.GetUnit(i).State)
+            RealBattleScript.BattleUnit unit = group.GetUnit(i);
+            switch (unit.State)
             {
                 case RealBattleScript.UnitStates.Stay:
                     SetAnim(arr[i], AnimState.IDLE);
@@ -294,7 +295,15 @@ public class BattleGUIScript : MonoBehaviour
                     SetAnim(arr[i], AnimState.WALK);
                     break;
                 case RealBattleScript.UnitStates.Fight:
-                    SetAnim(arr[i], AnimState.ATTACK);
+                    if (troop != RealBattleScript.RealBattleTroops.Art)
+                    { SetAnim(arr[i], AnimState.ATTACK); }
+                    else if (unit.ArtShoot)
+	                {
+                        SetAnim(arr[i], AnimState.BOW_SHOOT, false);
+                        arr[i].state.Complete += delegate(Spine.TrackEntry entry)
+                        { unit.ArtShoot = false; };
+                    }
+                    else SetAnim(arr[i], AnimState.IDLE, false);
                     break;
             }
             #endregion
