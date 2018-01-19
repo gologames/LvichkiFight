@@ -7,8 +7,8 @@ public class TestStartFight : MonoBehaviour
     {
         if (GUI.Button(new Rect(0,0,100,50), "Run"))
         {
-            StartFight.LoadFightScene(0, 2, 0, 1,
-                30, 20, 10, 30, 20, 10);
+            StartFight.LoadFightScene(1, 2, 0, 1,
+                42, 20, 4, 30, 25, 8);
         }
     }
 }

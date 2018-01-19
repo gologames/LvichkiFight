@@ -247,7 +247,15 @@ public class BattleGUIScript : MonoBehaviour
     void _DestroyDead(RealBattleScript.BattleGroup group, SkeletonAnimation[] arr)
     {
         for (int i = group.GetUnitsCount(); i < arr.Length; i++)
-        { if (arr[i] != null) Destroy(arr[i].gameObject); else break; }
+        {
+            if (arr[i] != null)
+            {
+                SetAnim(arr[i], AnimState.DEATH, false);
+                arr[i].skeleton.SetColor(new Color(0.0f, 0.0f, 0.0f, 0.2f));
+                arr[i] = null;
+            }
+            else break;
+        }
     }
     void DestroyDead()
     {
@@ -303,7 +311,7 @@ public class BattleGUIScript : MonoBehaviour
                         arr[i].state.Complete += delegate(Spine.TrackEntry entry)
                         { unit.ArtShoot = false; };
                     }
-                    else SetAnim(arr[i], AnimState.IDLE, false);
+                    else SetAnim(arr[i], AnimState.IDLE, true);
                     break;
             }
             #endregion
