@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class AfterFight : MonoBehaviour
 {
@@ -24,5 +25,8 @@ public class AfterFight : MonoBehaviour
         GUI.Label(new Rect(200, 100, 100, 50), "Right inf: " + rightInf);
         GUI.Label(new Rect(200, 150, 100, 50), "Right cav: " + rightCav);
         GUI.Label(new Rect(200, 200, 100, 50), "Right art: " + rightArt);
+
+        if (GUI.Button(new Rect(300, 100, 100, 50), "Restart"))
+        { SceneManager.LoadScene(0); }
     }
 }

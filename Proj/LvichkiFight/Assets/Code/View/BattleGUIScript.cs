@@ -40,7 +40,7 @@ public class BattleGUIScript : MonoBehaviour
     private float zoomSpeed = 110.0f;
     private float targetOrtho;
     private float smoothSpeed = 200.0f;
-    private float minOrtho = 50.0f;
+    private float minOrtho = 25.0f;
     private float maxOrtho = 296.0f;
     private float moveCameraSpeed = 170.0f;
     [SerializeField]
