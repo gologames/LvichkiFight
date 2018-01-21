@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
+//часть кода для демонстрации
+//здесь обработчики слайдеров и кнопки Fight
 public class TestStartFight : MonoBehaviour
 {
 

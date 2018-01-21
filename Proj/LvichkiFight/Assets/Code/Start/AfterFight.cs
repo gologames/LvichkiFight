@@ -2,13 +2,20 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+//часть кода для демонстрации
+//запускается после битвы, показывает результат
+//и кнопку рестарт
 public class AfterFight : MonoBehaviour
 {
     public void OnGUI()
     {
+        //получение информации после битвы
+
+        //победила левая или правая сторона?
         bool isLeftWin = PlayerPrefs.GetString(StartFight.WinKey) ==
             StartFight.LeftWinKey;
 
+        //получение количества оставшихся войск
         int leftInf = PlayerPrefs.GetInt(StartFight.LeftInfKey);
         int leftCav = PlayerPrefs.GetInt(StartFight.LeftCavKey);
         int leftArt = PlayerPrefs.GetInt(StartFight.LeftArtKey);
@@ -16,6 +23,7 @@ public class AfterFight : MonoBehaviour
         int rightCav = PlayerPrefs.GetInt(StartFight.RightCavKey);
         int rightArt = PlayerPrefs.GetInt(StartFight.RightArtKey);
 
+        //далее вывод этой информации
         string winString = isLeftWin ? "Left win" : "Right win";
         GUI.Label(new Rect(0, 0, 100, 50), winString);
 

@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 
+//здесь метод для запуска сцены с боем
 public static class StartFight
 {
     //Skins range from 0 to 2
@@ -10,6 +11,7 @@ public static class StartFight
     //Art_MaxCount = 100
     //WinKey = "Left" or "Right"
 
+    //это ключи для PlayerPrefs
     public const string WinKey = "IsLeftWin";
     public const string LeftWinKey = "Left";
     public const string RightWinKey = "Right";
@@ -23,6 +25,18 @@ public static class StartFight
     public const string RightCavKey = "RightCav";
     public const string RightArtKey = "RightArt";
 
+    //через этот статический метод запускать бой
+    //fightSceneNum - номер в порядке билда сцены с боем
+    //afterFightSceneNum - номер в порядке билда сцены
+    //  которую нужно запустить после боя
+    //leftSkin - номер скина левой армии
+    //rightSkin - номер скина правой армии
+    //leftInf - количество юнитов пехоты левой армии
+    //leftCav - количество юнитов кавалерии левой армии
+    //leftArt - количество юнитов артиллерии левой армии
+    //rightInf - количество юнитов пехоты правой армии
+    //rightCav - количество юнитов кавалерии правой армии
+    //rightArt - количество юнитов артиллерии правой армии
     public static void LoadFightScene(
         int fightSceneNum, int afterFightSceneNum,
         int leftSkin, int rightSkin,
